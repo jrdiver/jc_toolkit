@@ -1,30 +1,21 @@
-using System;
 using System.Windows.Forms;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 
-internal class resfinder
-{
-    // Trick from Bob Powell
-}
-
 namespace jcColor.Buttons
 {
     [Description("Round (Elliptical) Button Control")]
-    public class RoundButton : System.Windows.Forms.Button
+    public class RoundButton : Button
 	{
 		#region Public Properties
 		public override string Text
 		{
-			get
-			{
-				return buttonText;
-			}
-			set
+			get => buttonText;
+            set
 			{
 				buttonText = value;
-                this.Invalidate();
+                Invalidate();
 			}
 		}
 
@@ -33,12 +24,10 @@ namespace jcColor.Buttons
         DefaultValue(false),
         Description("Specifies if the button is checked.")]
         public bool CheckedFocus {
-            get {
-                return checkedFocus;
-            }
+            get => checkedFocus;
             set {
                     checkedFocus = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
@@ -47,12 +36,10 @@ namespace jcColor.Buttons
         DefaultValue(0),
         Description("Specifies if the button is pressed.")]
         public int ButtonPressOffset {
-            get {
-                return buttonPressOffset;
-            }
+            get => buttonPressOffset;
             set {
                 buttonPressOffset = value;
-                this.Invalidate();
+                Invalidate();
             }
         }
 
@@ -63,25 +50,25 @@ namespace jcColor.Buttons
         /// </summary>
         public RoundButton()
 		{
-			this.Name = "RoundButton";
-			this.Size = new System.Drawing.Size(50, 50);		// Default size of control
+			Name = "RoundButton";
+			Size = new(50, 50);		// Default size of control
 			
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.mouseDown);
-			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.mouseUp);
+            MouseDown += mouseDown;
+			MouseUp += mouseUp;
 			
-            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.keyDown);
-			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.keyUp);
+            KeyDown += keyDown;
+			KeyUp += keyUp;
         }
 
         #region Private properties
 
         private Color buttonColor;
-        private String buttonText;
+        private string buttonText;
 
         private Color edgeColor1;                                       // Change if button pressed
         private Color edgeColor2;                                       //
         private int edgeWidth;                                          // Width of button edge    
-        private Color cColor = Color.White;                             // Centre colour for Path Gradient brushed
+        private Color cColor = Color.White;                             // Centre color for Path Gradient brushed
 
         private GraphicsPath bpath;
         private GraphicsPath gpath;
@@ -92,14 +79,14 @@ namespace jcColor.Buttons
 
         protected override void OnPaint(PaintEventArgs e)
 		{
-            buttonColor = this.BackColor;
+            buttonColor = BackColor;
             edgeColor1 = ControlPaint.Light(buttonColor);
             edgeColor2 = ControlPaint.Dark(buttonColor);
 
 			Graphics g = e.Graphics;
 			g.SmoothingMode = SmoothingMode.AntiAlias;
 
-            Rectangle buttonRect = this.ClientRectangle;
+            Rectangle buttonRect = ClientRectangle;
 			edgeWidth = GetEdgeWidth(buttonRect);
 			
             FillBackground(g, buttonRect);
@@ -119,11 +106,11 @@ namespace jcColor.Buttons
         /// <param name="rect">Rectangle defining the button background</param>
 		protected void FillBackground(Graphics g, Rectangle rect)
 		{
-			// Fill in the control with the background colour, to overwrite anything
+			// Fill in the control with the background color, to overwrite anything
 			// that may have been drawn already.
 			Rectangle bgRect = rect;
 			bgRect.Inflate(1,1);
-			SolidBrush bgBrush = new SolidBrush(Color.FromKnownColor(KnownColor.Control));
+			SolidBrush bgBrush = new(Color.FromKnownColor(KnownColor.Control));
 			bgBrush.Color = Parent.BackColor;
 			g.FillRectangle(bgBrush, bgRect);
 			bgBrush.Dispose();
@@ -131,7 +118,7 @@ namespace jcColor.Buttons
 		}
 
         /// <summary>
-        /// Fill in the main button colour
+        /// Fill in the main button color
         /// </summary>
         /// <param name="g">Graphics Object</param>
         /// <param name="buttonRect">Rectangle defining the button top</param>
@@ -139,8 +126,8 @@ namespace jcColor.Buttons
 		{
 			BuildGraphicsPath(buttonRect);
 						
-			PathGradientBrush pgb = new PathGradientBrush(bpath);
-			pgb.SurroundColors = new Color[] {buttonColor};
+			PathGradientBrush pgb = new(bpath);
+			pgb.SurroundColors = new[] {buttonColor};
 			
 			buttonRect.Offset(buttonPressOffset, buttonPressOffset);
             
@@ -149,11 +136,9 @@ namespace jcColor.Buttons
 			FillShape(g, pgb, buttonRect);
 			
 			// If we have focus, draw line around control to indicate this.
-			if (CheckedFocus)
-			{
-				DrawFocus(g, buttonRect);
-			}
-		}
+			if (CheckedFocus) 
+                DrawFocus(g, buttonRect);
+        }
 				
 		#endregion Base draw functions
 		
@@ -161,9 +146,9 @@ namespace jcColor.Buttons
 		
 		protected virtual void BuildGraphicsPath(Rectangle buttonRect)
 		{
-			bpath = new GraphicsPath();
+			bpath = new();
 			// Adding this second smaller rectangle to the graphics path smooths the edges - don't know why...?
-			Rectangle rect2 = new Rectangle(buttonRect.X - 1, buttonRect.Y - 1, buttonRect.Width + 2, buttonRect.Height + 2);
+			Rectangle rect2 = new(buttonRect.X - 1, buttonRect.Y - 1, buttonRect.Width + 2, buttonRect.Height + 2);
 			AddShape(bpath, rect2);
 			AddShape(bpath, buttonRect);
 		}
@@ -173,9 +158,9 @@ namespace jcColor.Buttons
         /// </summary>
 		protected virtual void SetClickableRegion()
 		{
-			gpath = new GraphicsPath();
-			gpath.AddEllipse(this.ClientRectangle);
-			this.Region = new Region(gpath);			// Click only activates on elipse
+			gpath = new();
+			gpath.AddEllipse(ClientRectangle);
+			Region = new(gpath);			// Click only activates on elipse
 		}
 		
         /// <summary>
@@ -184,17 +169,13 @@ namespace jcColor.Buttons
         /// <param name="g">Graphics Object</param>
         /// <param name="brush">Either a PathGradient- or LinearGradientBrush</param>
         /// <param name="rect">The rectangle bounding the ellipse to be filled</param>
-		protected virtual void FillShape(Graphics g, Object brush, Rectangle rect)
+		protected virtual void FillShape(Graphics g, object brush, Rectangle rect)
 		{
-			if (brush.GetType().ToString() == "System.Drawing.Drawing2D.LinearGradientBrush")
-			{
-				g.FillEllipse((LinearGradientBrush)brush, rect);	
-			}
-			else if (brush.GetType().ToString() == "System.Drawing.Drawing2D.PathGradientBrush")
-			{
-				g.FillEllipse((PathGradientBrush)brush, rect);	
-			}
-		}
+            if (brush.GetType().ToString() == "System.Drawing.Drawing2D.LinearGradientBrush")
+                g.FillEllipse((LinearGradientBrush) brush, rect);
+            else if (brush.GetType().ToString() == "System.Drawing.Drawing2D.PathGradientBrush")
+                g.FillEllipse((PathGradientBrush) brush, rect);
+        }
 		
 		/// <summary>
 		/// Add an ellipse to the Graphics Path
@@ -236,12 +217,12 @@ namespace jcColor.Buttons
 		protected virtual void DrawFocus(Graphics g, Rectangle rect)
 		{
             rect.Inflate(-3, -3);
-            Pen fPen = new Pen(Color.FromArgb(150, 255, 255, 255));
+            Pen fPen = new(Color.FromArgb(150, 255, 255, 255));
 			fPen.DashStyle = DashStyle.Solid;
             fPen.Width = 2;
             DrawShape(g, fPen, rect);
             rect.Inflate(2, 2);
-            fPen = new Pen(Color.FromArgb(150, 0, 0, 0));
+            fPen = new(Color.FromArgb(150, 0, 0, 0));
             fPen.DashStyle = DashStyle.Solid;
             fPen.Width = 3;
             DrawShape(g, fPen, rect);
@@ -257,21 +238,21 @@ namespace jcColor.Buttons
 		/// <param name="rect">Rectangle defining the button</param>
 		/// <returns>The width of the edge</returns>
 		protected int GetEdgeWidth(Rectangle rect)
-		{
-			if (rect.Width < 50 | rect.Height < 50) return 1;
-			else return 2;
-		}
+        {
+            if (rect.Width < 50 | rect.Height < 50) return 1;
+            return 2;
+        }
 
 		#endregion Private Help functions
 		
 		#region Event Handlers
 				
-		protected void mouseDown(object sender, System.Windows.Forms.MouseEventArgs e) 
+		protected void mouseDown(object sender, MouseEventArgs e) 
 		{
 			buttonDown();
 		}
 		
-		protected void mouseUp(object sender, System.Windows.Forms.MouseEventArgs e) 
+		protected void mouseUp(object sender, MouseEventArgs e) 
 		{
     		buttonUp();
 		}
@@ -279,30 +260,26 @@ namespace jcColor.Buttons
 		protected void buttonDown() 
 		{
 			buttonPressOffset = 1;
-            this.Invalidate();
+            Invalidate();
 		}
 		
 		protected void buttonUp() 
 		{
 			buttonPressOffset = 0;
-			this.Invalidate();
+			Invalidate();
 		}
 		
-		protected void keyDown(object sender, System.Windows.Forms.KeyEventArgs e) 
+		protected void keyDown(object sender, KeyEventArgs e) 
 		{
-			if (e.KeyCode.ToString() == "Space")
-			{
-				buttonDown();
-			}
-		}
+			if (e.KeyCode.ToString() == "Space") 
+                buttonDown();
+        }
 		
-		protected void keyUp(object sender, System.Windows.Forms.KeyEventArgs e) 
+		protected void keyUp(object sender, KeyEventArgs e) 
 		{
-			if (e.KeyCode.ToString() == "Space")
-			{
-				buttonUp();
-			}
-		}
+			if (e.KeyCode.ToString() == "Space") 
+                buttonUp();
+        }
 
 
 		#endregion Event Handlers			
