@@ -115,7 +115,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="RoundButton.cs">
+    <Compile Include="Buttons\RoundButton.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util.cs" />
@@ -147,6 +147,7 @@
       <Install>true</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PreBuildEvent />
